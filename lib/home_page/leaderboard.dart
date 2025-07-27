@@ -10,7 +10,6 @@ class LeaderboardTab extends StatefulWidget {
 }
 
 class _LeaderboardTabState extends State<LeaderboardTab> {
-  bool _isExpanded = false;
   List<String> names = <String>[
     'Arnav Srivastava',
     'Arnav Srivastava',

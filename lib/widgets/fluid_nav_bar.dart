@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../provider/nav_provider.dart';
+import '../core/provider/nav_provider.dart';
 
 class FluidNavBar extends ConsumerStatefulWidget {
   final List<IconData> icons;
