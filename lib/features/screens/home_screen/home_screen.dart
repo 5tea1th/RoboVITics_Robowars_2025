@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
              ),
            ),
          ),
-                Padding(
+         Padding(
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [

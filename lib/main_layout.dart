@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:robowars_app/features/screens/home_screen.dart';
+import 'package:robowars_app/features/screens/home_screen/home_screen.dart';
 import 'package:robowars_app/home_page/provider/nav_provider.dart';
-import 'package:robowars_app/features/screens/schedule_screen.dart';
-import 'package:robowars_app/features/screens/teams_screen.dart';
-import 'package:robowars_app/features/screens/updates_screen.dart';
+import 'package:robowars_app/features/screens/schedule_screen/schedule_screen.dart';
+import 'package:robowars_app/features/screens/teams_screen/teams_screen.dart';
+import 'package:robowars_app/features/screens/updates_screen/updates_screen.dart';
 import 'package:robowars_app/home_page/widgets/fluid_nav_bar.dart';
 
 class MainLayout extends ConsumerWidget {
