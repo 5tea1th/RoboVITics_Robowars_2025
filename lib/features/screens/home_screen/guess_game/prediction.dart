@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:robowars_app/home_page/expanded_predict.dart';
-import 'package:robowars_app/home_page/widgets/prediction_team.dart';
-import 'package:robowars_app/home_page/widgets/vs_indicator.dart';
+
+import '../../../../widgets/prediction_team.dart';
+import '../../../../widgets/vs_indicator.dart';
+import 'expanded_predict.dart';
 
 class PredictionTab extends StatefulWidget {
   final ValueChanged<bool> onExpandChanged;

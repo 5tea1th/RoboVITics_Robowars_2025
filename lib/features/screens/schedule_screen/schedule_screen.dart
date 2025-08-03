@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
@@ -10,9 +11,25 @@ class Schedule extends StatefulWidget {
 
 class _ScheduleState extends State<Schedule> {
   String selectedTab = 'Upcoming';
-  List<List> Teams = [ ['Team Shadow', 'Team Xenon'], ['Team Shadow', 'Team Xenon'],['Team Shadow', 'Team Xenon'],['Team Shadow', 'Team Xenon'],['Team Shadow', 'Team Xenon']];
-  List<List> BotNames =[ ['Name of bot', 'Name of bot'], ['Name of bot', 'Name of bot'],['Name of bot', 'Name of bot'],['Name of bot', 'Name of bot'],['Name of bot', 'Name of bot']];
-  List<String> Winners =['Team Shadow', 'Team Shadow', 'Team Shadow', 'Team Shadow', 'Team Shadow'];
+  List<Map<String, dynamic>> scheduleData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSchedule();
+  }
+
+  void fetchSchedule() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('schedule').get();
+      final data = snapshot.docs.map((doc) => doc.data()).toList();
+      setState(() {
+        scheduleData = data;
+      });
+    } catch (e) {
+      print('Error loading schedule: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,14 +146,18 @@ class _ScheduleState extends State<Schedule> {
               child: selectedTab == 'Upcoming' ?
               ListView.builder(
                 padding: const EdgeInsets.all(10),
-                itemCount: Teams.length,
+                itemCount: scheduleData.length,
                 itemBuilder: (context, index) {
-
-
+                  final match = scheduleData[index];
+                  final team1 = match['team1'] ?? '';
+                  final team2 = match['team2'] ?? '';
+                  final bot1 = match['bot1'] ?? '';
+                  final bot2 = match['bot2'] ?? '';
+                  final category = match['category'] ?? '';
+                  final startTime = match['startTime'] ?? '';
+                  final winner = match['winner'] ?? '';
                   return Container(
                     height: 184,
-
-
                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -163,7 +184,6 @@ class _ScheduleState extends State<Schedule> {
                             ),
                           ),
                         ),
-
                         // 📝 Main Card Content
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +196,7 @@ class _ScheduleState extends State<Schedule> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${Teams[index][0]}\n(${BotNames[index][0]})",
+                                    "$team1\n($bot1)",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -185,8 +205,8 @@ class _ScheduleState extends State<Schedule> {
                                   ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         "Starts at",
                                         style: TextStyle(
                                           color: Colors.white,
@@ -194,8 +214,8 @@ class _ScheduleState extends State<Schedule> {
                                         ),
                                       ),
                                       Text(
-                                        "3:30 p.m",
-                                        style: TextStyle(
+                                        "$startTime",
+                                        style: const TextStyle(
                                           color: Color(0xFFB84BFF),
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -206,9 +226,7 @@ class _ScheduleState extends State<Schedule> {
                                 ],
                               ),
                             ),
-
                             const SizedBox(height: 8),
-
                             // V/S Stylized
                             Container(
                               padding: const EdgeInsets.only(left: 20),
@@ -241,18 +259,15 @@ class _ScheduleState extends State<Schedule> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 13),
-
                             // Bottom Row
-
                             Container(
                               padding: const EdgeInsets.only(bottom:15,left:15,right: 15),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${Teams[index][1]}\n(${BotNames[index][1]})",
+                                    "$team2\n($bot2)",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -271,7 +286,6 @@ class _ScheduleState extends State<Schedule> {
                                       ],
                                     ),
                                     child: Container(
-
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.purpleAccent),
@@ -292,16 +306,15 @@ class _ScheduleState extends State<Schedule> {
                                           ),
                                         ],
                                       ),
-                                      child: const Text(
-                                        "Category (15 kg)",
-                                        style: TextStyle(
+                                      child: Text(
+                                        "Category ($category)",
+                                        style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
                                         ),
                                       ),
                                     ),
-
                                   ),
                                 ],
                               ),
@@ -311,7 +324,6 @@ class _ScheduleState extends State<Schedule> {
                       ],
                     ),
                   );
-
                 },
               ) :
 
@@ -345,18 +357,23 @@ class _ScheduleState extends State<Schedule> {
 
               ListView.builder(
                 padding: const EdgeInsets.all(10),
-                itemCount: Teams.length,
+                itemCount: scheduleData.length,
                 itemBuilder: (context, index) {
+                  final match = scheduleData[index];
+                  final team1 = match['team1'] ?? '';
+                  final team2 = match['team2'] ?? '';
+                  final bot1 = match['bot1'] ?? '';
+                  final bot2 = match['bot2'] ?? '';
+                  final category = match['category'] ?? '';
+                  final startTime = match['startTime'] ?? '';
+                  final winner = match['winner'] ?? '';
                   return Container(
                     height: 184,
-
-
                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(color: Colors.purpleAccent)),
-
                     child: Stack(
                       children: [
                         // 🎨 Quarter-Circle Gradient Decoration (Top-Right)
@@ -377,7 +394,6 @@ class _ScheduleState extends State<Schedule> {
                             ),
                           ),
                         ),
-
                         // 🧱 Main Content
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +406,7 @@ class _ScheduleState extends State<Schedule> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${Teams[index][0]}\n(${BotNames[index][0]})",
+                                    "$team1\n($bot1)",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -414,9 +430,7 @@ class _ScheduleState extends State<Schedule> {
                                 ],
                               ),
                             ),
-
                             const SizedBox(height: 8),
-
                             // V/S with MATCH info
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -424,9 +438,9 @@ class _ScheduleState extends State<Schedule> {
                               children: [
                                 // Left: V/S
                                 Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: RichText(
-                                    text: TextSpan(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child:  RichText(
+                                    text: const TextSpan(
                                       text: 'V',
                                       style: TextStyle(
                                         fontSize: 17,
@@ -454,14 +468,13 @@ class _ScheduleState extends State<Schedule> {
                                     ),
                                   ),
                                 ),
-
                                 // Right: MATCH (e.g., Match 1)
                                 Transform.translate(
                                   offset: const Offset(0, -20),
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 8),
                                     child: Text(
-                                      Winners[index], // Dynamic value like "MATCH 1"
+                                      winner,
                                       style: const TextStyle(
                                         color: Color(0xFFBA9BE2),
                                         fontSize: 25,
@@ -472,9 +485,7 @@ class _ScheduleState extends State<Schedule> {
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 8),
-
                             // Bottom Row
                             Container(
                               padding: const EdgeInsets.only(bottom:15,left:15,right: 15),
@@ -482,7 +493,7 @@ class _ScheduleState extends State<Schedule> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${Teams[index][1]}\n(${BotNames[index][1]})",
+                                    "$team2\n($bot2)",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -504,7 +515,6 @@ class _ScheduleState extends State<Schedule> {
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.purpleAccent),
-
                                         gradient: const LinearGradient(
                                           begin: Alignment.topCenter,
                                           end: Alignment.bottomCenter,
@@ -522,9 +532,9 @@ class _ScheduleState extends State<Schedule> {
                                           ),
                                         ],
                                       ),
-                                      child: const Text(
-                                        "Category (15 kg)",
-                                        style: TextStyle(
+                                      child: Text(
+                                        "Category ($category)",
+                                        style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
@@ -540,8 +550,6 @@ class _ScheduleState extends State<Schedule> {
                       ],
                     ),
                   );
-
-
                 },
               )
           ),

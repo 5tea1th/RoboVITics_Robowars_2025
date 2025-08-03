@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:robowars_app/home_page/widgets/fluid_nav_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UpdatesPage extends StatefulWidget {
   const UpdatesPage({super.key});
@@ -146,24 +146,18 @@ class _UpdatesPageState extends State<UpdatesPage> {
     width: 40,
   );
 
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom,
-          right: 10.0, // Don't forget horizontal padding
-        ),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: const Color(0xFF8439F9),
-          child: const Icon(Icons.campaign, color: Colors.white),
-        ),
-      ),
-      // Location should be separate
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90 + MediaQuery.of(context).padding.top),
@@ -227,37 +221,81 @@ class _UpdatesPageState extends State<UpdatesPage> {
               ),
             ),
           ),
-          ListView(
-            padding: const EdgeInsets.only(bottom: 20, top: 10),
-            children: [
-              UpdatesPage.buildUpdateCard(
-                name: "John Doe",
-                message: "The competition schedule has been updated. Please check the new timings for your matches.",
-                time: "9:00 am",
-              ),
-              UpdatesPage.buildUpdateCard(
-                name: "Jane Smith",
-                message: "Team registration deadline has been extended to Friday. Make sure to submit all required documents.",
-                time: "10:30 am",
-              ),
-              UpdatesPage.buildDateDivider("Yesterday"),
-              UpdatesPage.buildUpdateCard(
-                name: "Event Coordinator",
-                message: "Reminder: Mandatory safety briefing tomorrow at 11 AM in the main auditorium.",
-                time: "3:45 pm",
-              ),
-              UpdatesPage.buildUpdateCard(
-                name: "Technical Team",
-                message: "New rule update: All robots must pass weight verification before each match.",
-                time: "5:20 pm",
-              ),
-              UpdatesPage.buildDateDivider("May 24"),
-              UpdatesPage.buildUpdateCard(
-                name: "Organizing Committee",
-                message: "Congratulations to Team Phoenix for winning the innovation award!",
-                time: "7:00 pm",
-              ),
-            ],
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('updates')
+                .orderBy('timestamp', descending: false)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No updates yet.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              final docs = snapshot.data!.docs;
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_scrollController.hasClients) {
+                  _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                }
+              });
+
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.only(bottom: 20, top: 10),
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final update = docs[index].data() as Map<String, dynamic>;
+                  final timestamp = update['timestamp'] as Timestamp?;
+                  final dateTime = timestamp?.toDate() ?? DateTime.now();
+                  final now = DateTime.now();
+                  final isToday = dateTime.day == now.day &&
+                                  dateTime.month == now.month &&
+                                  dateTime.year == now.year;
+                  final currentDate = isToday ? "Today" : "${dateTime.day}/${dateTime.month}/${dateTime.year}";
+                  final time = "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+
+                  final previousTimestamp = index == 0
+                      ? null
+                      : (docs[index - 1].data() as Map<String, dynamic>)['timestamp'] as Timestamp?;
+                  final previousDateTime = previousTimestamp?.toDate();
+                  final isPreviousToday = previousDateTime != null &&
+                                          previousDateTime.day == now.day &&
+                                          previousDateTime.month == now.month &&
+                                          previousDateTime.year == now.year;
+                  final previousDate = previousDateTime == null
+                      ? null
+                      : isPreviousToday ? "Today" : "${previousDateTime.day}/${previousDateTime.month}/${previousDateTime.year}";
+
+                  final showDivider = currentDate != previousDate;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (showDivider)
+                        UpdatesPage.buildDateDivider(currentDate),
+                      UpdatesPage.buildUpdateCard(
+                        name: update['name'] ?? "",
+                        message: update['message'] ?? "",
+                        time: time,
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ],
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:robowars_app/home_page/pop_up.dart';
+import 'package:robowars_app/features/screens/home_screen/guess_game/pop_up.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 

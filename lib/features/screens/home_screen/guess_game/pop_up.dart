@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
-import 'package:robowars_app/home_page/leaderboard.dart';
-import 'package:robowars_app/home_page/prediction.dart';
+import 'package:robowars_app/features/screens/home_screen/guess_game/prediction.dart';
+
+import 'leaderboard.dart';
+
 
 class PopUpCard extends StatefulWidget {
   const PopUpCard({super.key});

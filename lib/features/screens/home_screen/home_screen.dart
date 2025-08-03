@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:robowars_app/home_page/guess_game.dart';
-import 'package:robowars_app/home_page/live_match.dart';
-import 'package:robowars_app/home_page/key_contenders.dart';
-import 'package:robowars_app/home_page/quick_stats.dart';
-import 'package:robowars_app/home_page/widgets/fluid_nav_bar.dart';
+import 'package:robowars_app/features/screens/home_screen/quick_stats.dart';
+
+import 'key_contenders.dart';
+import 'live_match.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -75,7 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      GuessGame(),
+                      //GalleryCarousel(),
+                      SizedBox(height: 20),
+                      //YouTubeLiveEmbed(),
                       SizedBox(height: 20),
                       LiveMatch(),
                       SizedBox(height: 20),
@@ -102,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           "KOs": "3",
                         },
                       ),
-                      SizedBox(height: kBottomNavigationBarHeight+16),
+                      SizedBox(height: kBottomNavigationBarHeight+10),
                     ],
                   ),
                 ),
