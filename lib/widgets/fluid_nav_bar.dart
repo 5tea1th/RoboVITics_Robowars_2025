@@ -86,7 +86,7 @@ class _FluidNavBarState extends ConsumerState<FluidNavBar>
     final safeAreaBottom = MediaQuery.of(context).padding.bottom;
 
     return SizedBox(
-      height: widget.barHeight + safeAreaBottom,
+      height: widget.barHeight + 10 + safeAreaBottom,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -133,7 +133,9 @@ class _FluidNavBarState extends ConsumerState<FluidNavBar>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (!isActive) ...[
-                          SizedBox(height: widget.barHeight - 24),
+                          SizedBox(
+                            height: (widget.barHeight - widget.iconSize) / 2,
+                          ),
                           Icon(
                             widget.icons[index],
                             size: widget.iconSize,

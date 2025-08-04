@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:robowars_app/features/screens/home_screen/quick_stats.dart';
 
+import '../../../core/constants/constants.dart';
+import 'gallery_carousel.dart';
 import 'key_contenders.dart';
 import 'live_match.dart';
 
@@ -14,11 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final Widget logo = SvgPicture.asset(
-    'assets/images/robovitics logo.svg',
-    height: 40,
-    width: 40,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      //GalleryCarousel(),
-                      SizedBox(height: 20),
-                      //YouTubeLiveEmbed(),
+                      GalleryCarousel(),
                       SizedBox(height: 20),
                       LiveMatch(),
                       SizedBox(height: 20),
