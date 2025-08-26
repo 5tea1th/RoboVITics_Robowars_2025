@@ -20,10 +20,13 @@ class GalleryCarousel extends StatelessWidget {
         options: CarouselOptions(
           height: 400.0,
           autoPlay: true,
-          enlargeCenterPage: true,
-          viewportFraction: 0.8,
-          aspectRatio: 16 / 9,
+          enlargeCenterPage: false,
+          viewportFraction: 0.95,
+          pageSnapping: true,
+          enlargeStrategy: CenterPageEnlargeStrategy.scale,
           initialPage: 0,
+          enableInfiniteScroll: true,
+          pauseAutoPlayOnTouch: true,
         ),
         items: assetImages.map((imagePath) {
           return Builder(
@@ -46,5 +49,3 @@ class GalleryCarousel extends StatelessWidget {
     );
   }
 }
-
-

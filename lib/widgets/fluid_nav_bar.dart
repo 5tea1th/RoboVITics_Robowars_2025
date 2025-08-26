@@ -17,7 +17,7 @@ class FluidNavBar extends ConsumerStatefulWidget {
   final BuildContext context;
 
   const FluidNavBar({
-    Key? key,
+    super.key,
     required this.icons,
     this.labels,
     required this.currentIndex,
@@ -30,8 +30,7 @@ class FluidNavBar extends ConsumerStatefulWidget {
     this.barHeight = 50.0,
     this.bubbleSize = 48.0,
     required this.context,
-  }) : assert(icons.length >= 2, 'At least 2 icons are required'),
-       super(key: key);
+  }) : assert(icons.length >= 2, 'At least 2 icons are required');
 
   @override
   ConsumerState<FluidNavBar> createState() => _FluidNavBarState();
@@ -86,7 +85,7 @@ class _FluidNavBarState extends ConsumerState<FluidNavBar>
     final safeAreaBottom = MediaQuery.of(context).padding.bottom;
 
     return SizedBox(
-      height: widget.barHeight + 10 + safeAreaBottom,
+      height: widget.barHeight + 18 + safeAreaBottom,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -145,7 +144,7 @@ class _FluidNavBarState extends ConsumerState<FluidNavBar>
                         if (widget.labels != null &&
                             widget.labels!.length > index)
                           Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
+                            padding: const EdgeInsets.only(top:10.0),
                             child: Text(
                               widget.labels![index],
                               style: TextStyle(
@@ -188,7 +187,7 @@ class _FluidNavBarState extends ConsumerState<FluidNavBar>
               }
 
               return Positioned(
-                bottom: 15 + safeAreaBottom, // Adjusted to raise the bubble
+                bottom: 46 + safeAreaBottom, // Adjusted to raise the bubble
                 left: left,
                 child: Container(
                   width: widget.bubbleSize,

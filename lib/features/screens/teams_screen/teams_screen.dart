@@ -23,46 +23,50 @@ class _TeamScreenState extends State<TeamScreen> {
 
   void fetchTeamsData() async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('team').get();
-      print("Raw team docs fetched: ${snapshot.docs.length}");
+      final snapshot = await FirebaseFirestore.instance
+          .collection('team')
+          .get();
 
-      final data = snapshot.docs.map((doc) {
-        final team = doc.data();
-        print("Processing team doc: $team");
-        // Ensure required fields are present and non-null
-        if (team['name'] == null || team['image'] == null || team['description'] == null) {
-          print("Skipping doc due to missing field(s): $team");
-          return null;
-        }
-        return {
-          'name': team['name'] ?? 'Unnamed',
-          'image': team['image'] ?? '',
-          'description': team['description'] ?? '',
-          'matches': team['matches'] ?? 0,
-          'won': team['won'] ?? 0,
-          'lost': team['lost'] ?? 0,
-          'points': team['points'] ?? 0,
-          'bots': (team['bots'] as Map<String, dynamic>? ?? {})
-              .entries
-              .map((entry) => {
-                    'name': entry.value['name'] ?? 'Unknown Bot',
-                    'weight': entry.value['weight'] ?? '',
-                  })
-              .toList(),
-        };
-      }).where((team) => team != null).cast<Map<String, dynamic>>().toList();
-
-      // Sort by points descending
+      final data = snapshot.docs
+          .map((doc) {
+            final team = doc.data();
+            if (team['name'] == null ||
+                team['image'] == null ||
+                team['description'] == null) {
+              print("Skipping doc due to missing field(s): $team");
+              return null;
+            }
+            return {
+              'name': team['name'] ?? 'Unnamed',
+              'image': team['image'] ?? '',
+              'description': team['description'] ?? '',
+              'matches': team['matches'] ?? 0,
+              'won': team['won'] ?? 0,
+              'lost': team['lost'] ?? 0,
+              'points': team['points'] ?? 0,
+              'bots': (team['bots'] as Map<String, dynamic>? ?? {}).entries
+                  .map(
+                    (entry) => {
+                      'name': entry.value['name'] ?? 'Unknown Bot',
+                      'weight': entry.value['weight'] ?? '',
+                    },
+                  )
+                  .toList(),
+            };
+          })
+          .where((team) => team != null)
+          .cast<Map<String, dynamic>>()
+          .toList();
+      //sort in descending for the table
       data.sort((a, b) => b['points'].compareTo(a['points']));
 
-      print("Final processed team data: $data");
       if (mounted) {
         setState(() {
           teamsData = data;
         });
       }
     } catch (e) {
-      print('Error fetching teams data: $e');
+      SnackBar(content: Text('Error Fetching Teams Data'));
     }
   }
 
@@ -73,7 +77,6 @@ class _TeamScreenState extends State<TeamScreen> {
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          _buildFadingLine(),
           const SizedBox(height: 24),
           _buildToggle(),
           const SizedBox(height: 24),
@@ -83,53 +86,65 @@ class _TeamScreenState extends State<TeamScreen> {
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.black,
-      leading: Padding(
-        padding: const EdgeInsets.all(8),
-        child: SvgPicture.asset(
-          'assets/robovitics logo.svg',
-          height: 28,
-          width: 28,
-        ),
-      ),
-      title: Text(
-        isTeamsSelected ? 'Teams' : 'Table',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      centerTitle: true,
-      actions: const [
-        Padding(
-          padding: EdgeInsets.only(right: 12),
-          child: Icon(
-            Icons.account_circle_outlined,
-            color: Color(0xFF9D3AE7),
-            size: 40,
+  PreferredSize _buildAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(65),
+      child: Column(
+        children: [
+          AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: Padding(
+              padding: const EdgeInsets.all(10),
+              child: SvgPicture.asset(
+                'assets/images/robovitics logo.svg',
+                height: 40,
+                width: 40,
+              ),
+            ),
+            centerTitle: true,
+            title: const Text(
+              "Teams",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Trajan Pro',
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Icon(
+                  Icons.account_circle_outlined,
+                  color: Color(0xFF9C49E2),
+                  size: 35,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
 
-
-  Widget _buildFadingLine() {
-    return Container(
-      height: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.transparent, Color(0xFF9D3AE7), Colors.transparent],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
+          Container(
+            height: 4,
+            margin: const EdgeInsets.symmetric(horizontal: 30),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.transparent,
+                  Color(0xFFB84BFF),
+                  Colors.transparent,
+                ],
+                stops: [0, 0.5, 1.0],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildToggle() {
     return Row(
@@ -137,15 +152,74 @@ class _TeamScreenState extends State<TeamScreen> {
       children: [
         Container(
           width: 240,
+          height: 44,
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             color: Colors.grey[900],
             borderRadius: BorderRadius.circular(24),
           ),
-          child: Row(
+          child: Stack(
             children: [
-              _toggleButton(label: 'Teams', selectTeams: true),
-              _toggleButton(label: 'Table', selectTeams: false),
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 250),
+                alignment: isTeamsSelected ? Alignment.centerLeft : Alignment.centerRight,
+                curve: Curves.easeInOut,
+                child: Container(
+                  width: (240 - 6) / 2, // subtract padding, then half
+                  height: 38,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF9D3AE7),
+                        Color.fromARGB(255, 200, 141, 245),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        isTeamsSelected = true;
+                      }),
+                      child: Container(
+                        height: 38,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Teams',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isTeamsSelected ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        isTeamsSelected = false;
+                      }),
+                      child: Container(
+                        height: 38,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Table',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: !isTeamsSelected ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -153,47 +227,12 @@ class _TeamScreenState extends State<TeamScreen> {
     );
   }
 
-  Widget _toggleButton({required String label, required bool selectTeams}) {
-    final selected = isTeamsSelected == selectTeams;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() {
-          isTeamsSelected = selectTeams;
-        }),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-          decoration: BoxDecoration(
-            gradient: selected
-                ? const LinearGradient(
-              colors: [Color(0xFF9D3AE7), Color.fromARGB(255, 200, 141, 245)],
-              begin: Alignment.centerLeft,
-              end: Alignment.bottomCenter,
-            )
-                : null,
-            color: selected ? null : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: selected ? Colors.black : Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _toggleButton is no longer needed with sliding indicator design
 
-
-  Widget _buildAnimatedBody() =>
-      AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: isTeamsSelected ? _buildTeamsList() : _buildTableView(),
-      );
+  Widget _buildAnimatedBody() => AnimatedSwitcher(
+    duration: const Duration(milliseconds: 300),
+    child: isTeamsSelected ? _buildTeamsList() : _buildTableView(),
+  );
 
   Widget _buildTeamsList() => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -206,16 +245,16 @@ class _TeamScreenState extends State<TeamScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: SingleChildScrollView(
-            child: ListView.separated(
+            child: ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 40),
               itemCount: teamsData.length,
-              separatorBuilder: (_, __) => _buildFadingLine(),
               itemBuilder: (context, index) {
                 final team = teamsData[index];
-                final bots = (List<Map<String, dynamic>>.from(team['bots'])
-                  ..sort((a, b) => a['name'] == 'Raven' ? -1 : 1)).toList();
+                final bots = (List<Map<String, dynamic>>.from(
+                  team['bots'],
+                )..sort((a, b) => a['name'] == 'Raven' ? -1 : 1)).toList();
 
                 return GestureDetector(
                   onTap: () => _showTeamPopup(context, team),
@@ -233,8 +272,9 @@ class _TeamScreenState extends State<TeamScreen> {
                               border: Border.all(color: Colors.white, width: 2),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: (
-                              team['image'] != null && team['image'].toString().isNotEmpty
+                            child:
+                                (team['image'] != null &&
+                                    team['image'].toString().isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(14),
                                     child: Image.network(
@@ -250,13 +290,15 @@ class _TeamScreenState extends State<TeamScreen> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(14),
                                       gradient: const LinearGradient(
-                                        colors: [Colors.deepPurple, Colors.black],
+                                        colors: [
+                                          Colors.deepPurple,
+                                          Colors.black,
+                                        ],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ),
                                     ),
-                                  )
-                            ),
+                                  )),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -265,7 +307,10 @@ class _TeamScreenState extends State<TeamScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 15, top: 4),
+                                  padding: const EdgeInsets.only(
+                                    left: 15,
+                                    top: 4,
+                                  ),
                                   child: Text(
                                     team['name'],
                                     maxLines: 1,
@@ -282,28 +327,43 @@ class _TeamScreenState extends State<TeamScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: bots.map<Widget>((bot) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(bottom: 6, left: 15),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 6,
+                                        left: 15,
+                                      ),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           gradient: const LinearGradient(
-                                            colors: [Color(0xFF9D3AE7), Color(0xFF6A1B9A)],
+                                            colors: [
+                                              Color(0xFF9D3AE7),
+                                              Color(0xFF6A1B9A),
+                                            ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                           ),
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
                                         padding: const EdgeInsets.all(1.5),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             gradient: const LinearGradient(
-                                              colors: [Colors.white, Colors.white],
+                                              colors: [
+                                                Colors.white,
+                                                Colors.white,
+                                              ],
                                               begin: Alignment.center,
                                               end: Alignment.centerRight,
                                             ),
-                                            borderRadius: BorderRadius.circular(18),
+                                            borderRadius: BorderRadius.circular(
+                                              18,
+                                            ),
                                           ),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 6),
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
                                           child: Text(
                                             '${bot['name']} (${bot['weight']})',
                                             style: const TextStyle(
@@ -351,7 +411,6 @@ class _TeamScreenState extends State<TeamScreen> {
     ),
   );
 
-
   Widget _buildTableView() => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: ListView.builder(
@@ -396,7 +455,10 @@ class _TeamScreenState extends State<TeamScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.grey.shade400, width: 1),
+                        border: Border.all(
+                          color: Colors.grey.shade400,
+                          width: 1,
+                        ),
                         color: Colors.black12,
                       ),
                       padding: const EdgeInsets.all(12),
@@ -422,12 +484,25 @@ class _TeamScreenState extends State<TeamScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Matches", style: TextStyle(color: Colors.white)),
-                                    Text("Won", style: TextStyle(color: Colors.white)),
-                                    Text("Lost", style: TextStyle(color: Colors.white)),
-                                    Text("Points", style: TextStyle(color: Colors.white)),
+                                    Text(
+                                      "Matches",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Won",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Lost",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Points",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -435,19 +510,39 @@ class _TeamScreenState extends State<TeamScreen> {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     children: [
-                                      Text("${team['matches']}", style: const TextStyle(color: Color(0xFF9D3AE7))),
+                                      Text(
+                                        "${team['matches']}",
+                                        style: const TextStyle(
+                                          color: Color(0xFF9D3AE7),
+                                        ),
+                                      ),
                                       const SizedBox(width: 20),
-                                      Text("${team['won']}", style: const TextStyle(color: Color(0xFF9D3AE7))),
+                                      Text(
+                                        "${team['won']}",
+                                        style: const TextStyle(
+                                          color: Color(0xFF9D3AE7),
+                                        ),
+                                      ),
                                       const SizedBox(width: 20),
-                                      Text("${team['lost']}", style: const TextStyle(color: Color(0xFF9D3AE7))),
+                                      Text(
+                                        "${team['lost']}",
+                                        style: const TextStyle(
+                                          color: Color(0xFF9D3AE7),
+                                        ),
+                                      ),
                                       const SizedBox(width: 20),
-                                      Text("${team['points']}", style: const TextStyle(color: Color(0xFF9D3AE7))),
+                                      Text(
+                                        "${team['points']}",
+                                        style: const TextStyle(
+                                          color: Color(0xFF9D3AE7),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -460,7 +555,6 @@ class _TeamScreenState extends State<TeamScreen> {
       },
     ),
   );
-
 
   void _showTeamPopup(BuildContext context, Map<String, dynamic> team) {
     showGeneralDialog(
@@ -502,7 +596,9 @@ class _TeamScreenState extends State<TeamScreen> {
                             Expanded(
                               child: Center(
                                 child: ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 220),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 220,
+                                  ),
                                   child: Text(
                                     team['name'],
                                     maxLines: 1,
@@ -521,7 +617,11 @@ class _TeamScreenState extends State<TeamScreen> {
                               child: const CircleAvatar(
                                 radius: 16,
                                 backgroundColor: Color(0xFF9D3AE7),
-                                child: Icon(Icons.close, size: 18, color: Colors.white),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
@@ -530,8 +630,8 @@ class _TeamScreenState extends State<TeamScreen> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            (
-                              team['image'] != null && team['image'].toString().isNotEmpty
+                            (team['image'] != null &&
+                                    team['image'].toString().isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
                                     child: Image.network(
@@ -548,9 +648,11 @@ class _TeamScreenState extends State<TeamScreen> {
                                       color: Colors.white24,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    child: const Icon(Icons.image, color: Colors.white38),
-                                  )
-                            ),
+                                    child: const Icon(
+                                      Icons.image,
+                                      color: Colors.white38,
+                                    ),
+                                  )),
                             const SizedBox(width: 16),
                             Flexible(
                               child: SingleChildScrollView(
@@ -564,15 +666,26 @@ class _TeamScreenState extends State<TeamScreen> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Chip(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        label: Text('${bot['name']} (${bot['weight']})'),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                        ),
+                                        label: Text(
+                                          '${bot['name']} (${bot['weight']})',
+                                        ),
                                         labelStyle: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
-                                        backgroundColor: Color.fromARGB(255, 30, 22, 35),
+                                        backgroundColor: Color.fromARGB(
+                                          255,
+                                          30,
+                                          22,
+                                          35,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                           side: const BorderSide(
                                             color: Color(0xFF9D3AE7),
                                             width: 1.5,
@@ -619,7 +732,7 @@ class _TeamScreenState extends State<TeamScreen> {
                             childAspectRatio: 2.8,
                             children: List.generate(
                               6,
-                                  (i) => Container(
+                              (i) => Container(
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [Colors.black, Colors.black12],
@@ -659,9 +772,4 @@ class _TeamScreenState extends State<TeamScreen> {
       },
     );
   }
-
-
-
-
-
 }

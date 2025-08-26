@@ -216,7 +216,7 @@ class _UpdatesPageState extends State<UpdatesPage> {
             child: Opacity(
               opacity: 0.04,
               child: SvgPicture.asset(
-                'assets/logo.svg',
+                'assets/images/robovitics logo.svg',
                 width: 300,
               ),
             ),

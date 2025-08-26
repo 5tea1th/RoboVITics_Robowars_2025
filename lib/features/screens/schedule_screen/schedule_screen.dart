@@ -27,7 +27,7 @@ class _ScheduleState extends State<Schedule> {
         scheduleData = data;
       });
     } catch (e) {
-      print('Error loading schedule: $e');
+      SnackBar(content: Text('Error Fetching Schedule'),);
     }
   }
 
@@ -45,7 +45,7 @@ class _ScheduleState extends State<Schedule> {
               leading: Padding(
                 padding: const EdgeInsets.all(10),
                 child: SvgPicture.asset(
-                  'assets/logo.svg',
+                  'assets/images/robovitics logo.svg',
                   height: 40,
                   width: 40,
                 ),

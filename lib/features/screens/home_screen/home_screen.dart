@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:robowars_app/features/screens/home_screen/quick_stats.dart';
 
 import '../../../core/constants/constants.dart';
@@ -21,7 +22,63 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.black,
-      appBar:AppBar(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(65),
+        child: Column(
+          children: [
+            AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  'assets/images/robovitics logo.svg',
+                  height: 40,
+                  width: 40,
+                ),
+              ),
+              centerTitle: true,
+              title: const Text(
+                "Home",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Trajan Pro',
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Icon(
+                    Icons.account_circle_outlined,
+                    color: Color(0xFF9C49E2),
+                    size: 35,
+                  ),
+                ),
+              ],
+            ),
+
+            Container(
+              height: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.transparent,
+                    Color(0xFFB84BFF),
+                    Colors.transparent,
+                  ],
+                  stops: [0, 0.5, 1.0],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      /*appBar:AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
         leading: Padding(
@@ -48,10 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
+      ),*/
       body: SingleChildScrollView(
        child: Column(children: [
-         Container(
+         /*Container(
            height: 4,
            margin: const EdgeInsets.symmetric(horizontal: 30),
            decoration: const BoxDecoration(
@@ -66,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                stops: [0, 0.5, 1.0],
              ),
            ),
-         ),
+         ),*/
          Padding(
                   padding: EdgeInsets.all(16),
                   child: Column(
@@ -75,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 20),
                       LiveMatch(),
                       SizedBox(height: 20),
-                      KeyContenders(
+                      /*KeyContenders(
                         contenders: [
                           Contender(
                             name: "Raven (60 kg)",
@@ -97,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Losses": "2",
                           "KOs": "3",
                         },
-                      ),
+                      ),*/
                       SizedBox(height: kBottomNavigationBarHeight+10),
                     ],
                   ),
