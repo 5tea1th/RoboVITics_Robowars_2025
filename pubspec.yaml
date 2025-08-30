@@ -61,7 +61,27 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   riverpod_generator: ^2.6.5
   build_runner: ^2.5.4
+  flutter_native_splash: ^2.4.6
 
+flutter_native_splash:
+  # Fiery background for Android <12 and iOS
+  background_image: "assets/images/robowars_splash_screen.png"
+
+  # Your centered logo
+  image: assets/images/robowars_logo.png
+
+  # Fullscreen splash (hides notification bar)
+  fullscreen: true
+
+  # Dark mode (use same fiery bg if you want)
+  background_image_dark: "assets/images/robowars_splash_screen.png"
+  image_dark: assets/images/robowars_logo.png
+
+  android_12:
+    # Android 12 doesn’t support background images, so fallback to solid color
+    image: assets/images/robowars_logo.png
+    icon_background_color: "#000000"
+    color: "#000000" # make this black, similar to your fiery background
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
