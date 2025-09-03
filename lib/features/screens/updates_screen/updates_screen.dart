@@ -18,9 +18,17 @@ class UpdatesPage extends StatefulWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            radius: 18,
-            backgroundColor: Color(0xFFD9D9D9),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF8439F9).withOpacity(0.2),
+            ),
+            child: const Icon(
+              Icons.campaign, // or notifications / megaphone
+              color: Colors.white,
+              size: 18,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -136,10 +144,10 @@ class UpdatesPage extends StatefulWidget {
       ),
     );
   }
+
 }
 
 class _UpdatesPageState extends State<UpdatesPage> {
-  int _currentIndex = 0;
   final Widget logo = SvgPicture.asset(
     'assets/images/robovitics logo.svg',
     height: 40,
@@ -159,56 +167,63 @@ class _UpdatesPageState extends State<UpdatesPage> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(90 + MediaQuery.of(context).padding.top),
-        child: Container(
-          color: Colors.black,
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    logo,
-                    const Text(
-                      "Updates",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Trajan Pro',
-                      ),
-                    ),
-                    Icon(
-                      Icons.account_circle_outlined,
-                      color: Color(0xFF9C49E2),
-                      size: 45,
-                    ),
-                  ],
+      appBar:PreferredSize(
+        preferredSize: const Size.fromHeight(65),
+        child: Column(
+          children: [
+            AppBar(
+              backgroundColor: Colors.black,
+              elevation: 0,
+              leading: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  'assets/images/robovitics logo.svg',
+                  height: 40,
+                  width: 40,
                 ),
               ),
-              Container(
-                height: 4,
-                margin: const EdgeInsets.symmetric(horizontal: 30),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Color(0xFFB84BFF),
-                      Colors.transparent,
-                    ],
-                    stops: [0, 0.5, 1.0],
+              centerTitle: true,
+              title: const Text(
+                "Updates",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Trajan Pro',
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Icon(
+                    Icons.account_circle_outlined,
+                    color: Color(0xFF9C49E2),
+                    size: 35, // or 45 if you want bigger
                   ),
                 ),
+              ],
+            ),
+
+            Container(
+              height: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.transparent,
+                    Color(0xFFB84BFF),
+                    Colors.transparent,
+                  ],
+                  stops: [0, 0.5, 1.0],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+
 
       body: Stack(
         children: [
@@ -254,7 +269,7 @@ class _UpdatesPageState extends State<UpdatesPage> {
 
               return ListView.builder(
                 controller: _scrollController,
-                padding: const EdgeInsets.only(bottom: 20, top: 10),
+                padding: const EdgeInsets.only(bottom: 100, top: 10),
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final update = docs[index].data() as Map<String, dynamic>;
