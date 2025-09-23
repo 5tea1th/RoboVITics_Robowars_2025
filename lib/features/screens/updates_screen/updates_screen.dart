@@ -44,7 +44,8 @@ class UpdatesPage extends StatefulWidget {
                       opacity: 0.05,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: SvgPicture.asset('assets/images/robovitics logo.svg',
+                        child: SvgPicture.asset(
+                          'assets/images/robovitics logo.svg',
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -107,10 +108,7 @@ class UpdatesPage extends StatefulWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [
-                    Colors.transparent,
-                    Color(0xFFB84BFF),
-                  ],
+                  colors: [Colors.transparent, Color(0xFFB84BFF)],
                 ),
               ),
             ),
@@ -132,10 +130,7 @@ class UpdatesPage extends StatefulWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [
-                    Colors.transparent,
-                    Color(0xFFB84BFF),
-                  ],
+                  colors: [Colors.transparent, Color(0xFFB84BFF)],
                 ),
               ),
             ),
@@ -144,7 +139,6 @@ class UpdatesPage extends StatefulWidget {
       ),
     );
   }
-
 }
 
 class _UpdatesPageState extends State<UpdatesPage> {
@@ -167,13 +161,14 @@ class _UpdatesPageState extends State<UpdatesPage> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar:PreferredSize(
+      appBar: PreferredSize(
         preferredSize: const Size.fromHeight(65),
         child: Column(
           children: [
             AppBar(
               backgroundColor: Colors.black,
               elevation: 0,
+              surfaceTintColor: Colors.transparent,
               leading: Padding(
                 padding: const EdgeInsets.all(10),
                 child: SvgPicture.asset(
@@ -195,10 +190,15 @@ class _UpdatesPageState extends State<UpdatesPage> {
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(
-                    Icons.account_circle_outlined,
-                    color: Color(0xFF9C49E2),
-                    size: 35, // or 45 if you want bigger
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.people,
+                      color: Color(0xFF9C49E2),
+                      size: 35,
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/developers');
+                    },
                   ),
                 ),
               ],
@@ -224,7 +224,6 @@ class _UpdatesPageState extends State<UpdatesPage> {
         ),
       ),
 
-
       body: Stack(
         children: [
           Center(
@@ -237,10 +236,11 @@ class _UpdatesPageState extends State<UpdatesPage> {
             ),
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('updates')
-                .orderBy('timestamp', descending: false)
-                .snapshots(),
+            stream:
+                FirebaseFirestore.instance
+                    .collection('updates')
+                    .orderBy('timestamp', descending: false)
+                    .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -276,23 +276,35 @@ class _UpdatesPageState extends State<UpdatesPage> {
                   final timestamp = update['timestamp'] as Timestamp?;
                   final dateTime = timestamp?.toDate() ?? DateTime.now();
                   final now = DateTime.now();
-                  final isToday = dateTime.day == now.day &&
-                                  dateTime.month == now.month &&
-                                  dateTime.year == now.year;
-                  final currentDate = isToday ? "Today" : "${dateTime.day}/${dateTime.month}/${dateTime.year}";
-                  final time = "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+                  final isToday =
+                      dateTime.day == now.day &&
+                      dateTime.month == now.month &&
+                      dateTime.year == now.year;
+                  final currentDate =
+                      isToday
+                          ? "Today"
+                          : "${dateTime.day}/${dateTime.month}/${dateTime.year}";
+                  final time =
+                      "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
 
-                  final previousTimestamp = index == 0
-                      ? null
-                      : (docs[index - 1].data() as Map<String, dynamic>)['timestamp'] as Timestamp?;
+                  final previousTimestamp =
+                      index == 0
+                          ? null
+                          : (docs[index - 1].data()
+                                  as Map<String, dynamic>)['timestamp']
+                              as Timestamp?;
                   final previousDateTime = previousTimestamp?.toDate();
-                  final isPreviousToday = previousDateTime != null &&
-                                          previousDateTime.day == now.day &&
-                                          previousDateTime.month == now.month &&
-                                          previousDateTime.year == now.year;
-                  final previousDate = previousDateTime == null
-                      ? null
-                      : isPreviousToday ? "Today" : "${previousDateTime.day}/${previousDateTime.month}/${previousDateTime.year}";
+                  final isPreviousToday =
+                      previousDateTime != null &&
+                      previousDateTime.day == now.day &&
+                      previousDateTime.month == now.month &&
+                      previousDateTime.year == now.year;
+                  final previousDate =
+                      previousDateTime == null
+                          ? null
+                          : isPreviousToday
+                          ? "Today"
+                          : "${previousDateTime.day}/${previousDateTime.month}/${previousDateTime.year}";
 
                   final showDivider = currentDate != previousDate;
 

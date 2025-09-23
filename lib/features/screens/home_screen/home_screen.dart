@@ -7,7 +7,6 @@ import 'gallery_carousel.dart';
 import 'key_contenders.dart';
 import 'live_match.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
             AppBar(
               backgroundColor: Colors.black,
               elevation: 0,
+              surfaceTintColor: Colors.transparent,
               leading: Padding(
                 padding: const EdgeInsets.all(10),
                 child: SvgPicture.asset(
@@ -50,10 +49,15 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(
-                    Icons.account_circle_outlined,
-                    color: Color(0xFF9C49E2),
-                    size: 35,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.people,
+                      color: Color(0xFF9C49E2),
+                      size: 35,
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/developers');
+                    },
                   ),
                 ),
               ],
@@ -107,8 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),*/
       body: SingleChildScrollView(
-       child: Column(children: [
-         /*Container(
+        child: Column(
+          children: [
+            /*Container(
            height: 4,
            margin: const EdgeInsets.symmetric(horizontal: 30),
            decoration: const BoxDecoration(
@@ -124,15 +129,15 @@ class _HomeScreenState extends State<HomeScreen> {
              ),
            ),
          ),*/
-         Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      GalleryCarousel(),
-                      SizedBox(height: 20),
-                      LiveMatch(),
-                      SizedBox(height: 20),
-                      /*KeyContenders(
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  GalleryCarousel(),
+                  SizedBox(height: 20),
+                  LiveMatch(),
+                  SizedBox(height: 20),
+                  /*KeyContenders(
                         contenders: [
                           Contender(
                             name: "Raven (60 kg)",
@@ -155,11 +160,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           "KOs": "3",
                         },
                       ),*/
-                      SizedBox(height: kBottomNavigationBarHeight+10),
-                    ],
-                  ),
-                ),
-      ]),
+                  SizedBox(height: kBottomNavigationBarHeight + 10),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
